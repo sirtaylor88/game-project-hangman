@@ -1,7 +1,26 @@
 package main
 
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
+
+var dictionary = []string{
+	"Zombie",
+	"Gopher",
+	"United States of America",
+	"Indonesia",
+	"Gazelle",
+	"Apple",
+	"Programming",
+}
+
 func main() {
-	// Derive a word we have to guess
+	rand.Seed(time.Now().UnixNano())
+
+	targetWord := getRandomWord()
+	fmt.Println(targetWord)
 	// Printing game state
 	//   *  Print word you're guessing
 	//   *  Print hangman state
@@ -12,4 +31,9 @@ func main() {
 	//   *  If incorrect, update the hangman state
 	// If word is guessed, game over, you win
 	// If hangman is complete, game over, you lose
+}
+
+func getRandomWord() string {
+	targetWord := dictionary[rand.Intn(len(dictionary))]
+	return targetWord
 }
