@@ -29,9 +29,9 @@ func main() {
 	targetWord := getRandomWord()
 	guessedLetters := initializeGuessWord(targetWord)
 	hangmanState := 0
+	usedLetters := []rune{}
 
 	for !isGameOver(targetWord, guessedLetters, hangmanState) {
-		fmt.Println(guessedLetters)
 		printGameState(targetWord, guessedLetters, hangmanState)
 		input := readInput()
 		if len(input) != 1 {
@@ -40,6 +40,14 @@ func main() {
 		}
 
 		letter := rune(input[0])
+
+		if contains(usedLetters, unicode.ToLower(letter)) {
+			fmt.Printf("You've already used the letter %c", letter)
+			fmt.Println()
+		} else {
+			usedLetters = append(usedLetters, letter)
+		}
+
 		if isCorrectGuess(targetWord, letter) {
 			guessedLetters[letter] = true
 		} else {
@@ -56,6 +64,15 @@ func main() {
 	} else {
 		panic("Invalid state. Game is over and there is no winner!")
 	}
+}
+
+func contains(s []rune, r rune) bool {
+	for _, el := range s {
+		if el == r {
+			return true
+		}
+	}
+	return false
 }
 
 func initializeGuessWord(targetWord string) map[rune]bool {
