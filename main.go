@@ -27,7 +27,6 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	targetWord := getRandomWord()
-	// targetWord := "United States of America"
 	guessedLetters := initializeGuessWord(targetWord)
 	hangmanState := 0
 
@@ -38,16 +37,14 @@ func main() {
 			fmt.Println("Invalid input. Please use letters only...")
 			continue
 		}
-	}
 
-	// Printing game state
-	//   *  Print word you're guessing
-	//   *  Print hangman state
-	// Read user input
-	//   *  Validate it (e.g. only letters)
-	// Determine if the letter is a correct guess or not
-	//   *  If correct, update the guessed letter
-	//   *  If incorrect, update the hangman state
+		letter := rune(input[0])
+		if isCorrectGuess(targetWord, letter) {
+			guessedLetters[letter] = true
+		} else {
+			hangmanState++
+		}
+	}
 	// If word is guessed, game over, you win
 	// If hangman is complete, game over, you lose
 }
@@ -115,4 +112,8 @@ func readInput() string {
 	}
 
 	return strings.TrimSpace(input)
+}
+
+func isCorrectGuess(targetWord string, letter rune) bool {
+	return strings.ContainsRune(targetWord, letter)
 }
