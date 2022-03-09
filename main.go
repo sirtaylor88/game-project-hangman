@@ -23,6 +23,8 @@ var dictionary = []string{
 	"Programming",
 }
 
+const MaxPossibleHints = 1
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
@@ -30,32 +32,44 @@ func main() {
 	guessedLetters := initializeGuessWord(targetWord)
 	hangmanState := 0
 	usedLetters := []rune{}
+	hintCount := 0
 
 	for !isGameOver(targetWord, guessedLetters, hangmanState) {
-		printGameState(targetWord, guessedLetters, hangmanState)
+		printGameState(targetWord, guessedLetters, hangmanState, hintCount)
 		input := readInput()
 		if len(input) != 1 {
-			fmt.Println("Invalid input. Please use letters only...")
+			if input == "hint" && hintCount <= MaxPossibleHints {
+				fmt.Printf(
+					"Hint: There is a letter %c in this word!\n\n",
+					unicode.ToLower(hint(targetWord, guessedLetters)),
+				)
+				hintCount++
+			} else if input == "hint" {
+				fmt.Println("You already used all available hints!")
+			} else {
+				fmt.Println("Invalid input. Please use letters only...")
+
+			}
 			continue
+
 		}
 
 		letter := rune(input[0])
 
 		if contains(usedLetters, unicode.ToLower(letter)) {
-			fmt.Printf("You've already used the letter %c", letter)
-			fmt.Println()
+			fmt.Printf("You've already used the letter %c\n", letter)
 		} else {
 			usedLetters = append(usedLetters, unicode.ToLower(letter))
 		}
 
 		if isCorrectGuess(targetWord, letter) {
-			guessedLetters[letter] = true
+			guessedLetters[unicode.ToLower(letter)] = true
 		} else {
 			hangmanState++
 		}
 	}
 
-	printGameState(targetWord, guessedLetters, hangmanState)
+	printGameState(targetWord, guessedLetters, hangmanState, hintCount)
 	fmt.Print("Game Over...")
 	if isWordGuessed(targetWord, guessedLetters) {
 		fmt.Println("You win!")
@@ -117,10 +131,18 @@ func printGameState(
 	targetWord string,
 	guessedLetters map[rune]bool,
 	hangmanState int,
+	hintCount int,
 ) {
+	fmt.Println("\n***********************")
+	fmt.Println()
 	fmt.Println(getWordGuessingProgress(targetWord, guessedLetters))
 	fmt.Println()
+	if hintCount < MaxPossibleHints {
+		fmt.Println("If you want a hint, enter 'hint'")
+	}
+	fmt.Printf("Hints used: %d/%d \n", hintCount, MaxPossibleHints)
 	fmt.Println(getHangmanDrawing(hangmanState))
+	fmt.Println("\n***********************")
 }
 
 func getWordGuessingProgress(
@@ -166,4 +188,15 @@ func readInput() string {
 
 func isCorrectGuess(targetWord string, letter rune) bool {
 	return strings.ContainsRune(strings.ToLower(targetWord), unicode.ToLower(letter))
+}
+
+func hint(targetWord string, guessedLetters map[rune]bool) rune {
+	unguessedLetters := []rune{}
+	for _, ch := range targetWord {
+		if _, ok := guessedLetters[unicode.ToLower(rune(ch))]; !ok {
+			unguessedLetters = append(unguessedLetters, rune(ch))
+		}
+	}
+
+	return unguessedLetters[rand.Intn(len(unguessedLetters)-1)]
 }
