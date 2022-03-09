@@ -45,7 +45,7 @@ func main() {
 			fmt.Printf("You've already used the letter %c", letter)
 			fmt.Println()
 		} else {
-			usedLetters = append(usedLetters, letter)
+			usedLetters = append(usedLetters, unicode.ToLower(letter))
 		}
 
 		if isCorrectGuess(targetWord, letter) {
@@ -165,5 +165,5 @@ func readInput() string {
 }
 
 func isCorrectGuess(targetWord string, letter rune) bool {
-	return strings.ContainsRune(targetWord, letter)
+	return strings.ContainsRune(strings.ToLower(targetWord), unicode.ToLower(letter))
 }
