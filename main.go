@@ -77,8 +77,10 @@ func contains(s []rune, r rune) bool {
 
 func initializeGuessWord(targetWord string) map[rune]bool {
 	guessedLetters := map[rune]bool{}
-	guessedLetters[unicode.ToLower(rune(targetWord[0]))] = true
-	guessedLetters[unicode.ToLower(rune(targetWord[len(targetWord)-1]))] = true
+
+	index1, index2 := rand.Intn(len(targetWord)-1), rand.Intn(len(targetWord)-1)
+	guessedLetters[unicode.ToLower(rune(targetWord[index1]))] = true
+	guessedLetters[unicode.ToLower(rune(targetWord[index2]))] = true
 
 	return guessedLetters
 }
